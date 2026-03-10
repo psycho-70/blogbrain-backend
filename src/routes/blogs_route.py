@@ -10,29 +10,6 @@ from datetime import datetime
 
 blog_bp = Blueprint('blog_bp', __name__)
 
-TIER_1_COUNTRIES = ['US', 'GB', 'CA', 'AU', 'NZ', 'IE', 'DE', 'FR', 'IT', 'ES', 'NL', 'SE', 'CH', 'NO', 'DK', 'FI'] # Expanded Tier 1 list, customize as needed
-
-def is_tier_1_country(ip_addr):
-    """Check if an IP belongs to a tier 1 country using iplocate.io"""
-    # Allow localhost for development
-    if ip_addr in ['127.0.0.1', '::1', 'localhost'] or ip_addr.startswith('192.168.'):
-        return True
-        
-    try:
-        api_key = "cf6fda5aa57bad13027337fbd47bf807"
-        url = f"https://www.iplocate.io/api/lookup/{ip_addr}?apikey={api_key}"
-        req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
-        with urllib.request.urlopen(req, timeout=5) as response:
-            data = json.loads(response.read().decode('utf-8'))
-            country_code = data.get('country_code')
-            # If the API hits limit or doesn't return code, we might want to default to True or False
-            if country_code and country_code in TIER_1_COUNTRIES:
-                return True
-            return False
-    except Exception as e:
-        print(f"Geolocation API error: {e}")
-        # Defaulting to True on error so it doesn't break entirely if the API is down
-        return True
 
 
 def validate_blog_data(data, is_update=False):
@@ -60,19 +37,6 @@ def validate_blog_data(data, is_update=False):
 def get_all_blogs():
     """Get all published blogs"""
     try:
-        client_ip = request.headers.get('X-Forwarded-For', request.remote_addr)
-        if client_ip:
-            client_ip = client_ip.split(',')[0].strip()
-        else:
-            client_ip = '127.0.0.1'
-            
-        if not is_tier_1_country(client_ip):
-            return jsonify({
-                'message': 'Blogs are only available in Tier 1 countries.',
-                'blogs': [],
-                'pagination': {'page': 1, 'per_page': 10, 'total': 0, 'pages': 0, 'has_next': False, 'has_prev': False}
-            }), 403
-
         page = request.args.get('page', 1, type=int)
         per_page = request.args.get('per_page', 10, type=int)
         per_page = min(per_page, 50)
@@ -141,15 +105,6 @@ def get_all_blogs():
 def get_blog_by_slug(slug):
     """Get blog by slug"""
     try:
-        client_ip = request.headers.get('X-Forwarded-For', request.remote_addr)
-        if client_ip:
-            client_ip = client_ip.split(',')[0].strip()
-        else:
-            client_ip = '127.0.0.1'
-            
-        if not is_tier_1_country(client_ip):
-            return jsonify({'message': 'Blogs are only available in Tier 1 countries.'}), 403
-
         blog = BlogModel.query.filter_by(slug=slug).first()
         
         if not blog:
