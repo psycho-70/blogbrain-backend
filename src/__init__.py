@@ -9,6 +9,7 @@ from src.routes.upload_route import upload_bp
 from src.routes.chatbot_route import chatbot_bp
 from src.routes.comments_route import comments_bp
 from src.routes.contact_route import contact_bp
+from src.routes.cta_route import cta_bp
 import os
 
 def create_app():
@@ -20,6 +21,7 @@ def create_app():
     app.register_blueprint(chatbot_bp, url_prefix='/api')
     app.register_blueprint(comments_bp, url_prefix='/api')
     app.register_blueprint(contact_bp, url_prefix='/api')
+    app.register_blueprint(cta_bp, url_prefix='/api')
     # Configuration
     app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
     app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI')
@@ -42,6 +44,7 @@ def create_app():
         db.create_all()
         # Create default admin if not exists
         from src.models.login_model import LoginModel
+        from src.models.cta_model import CTAClickModel
         LoginModel.create_default_admin()
     @app.errorhandler(404)
     def not_found(error):
