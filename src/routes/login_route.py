@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from src.extenstion import db
+import os
 from src.models.login_model import LoginModel
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 import re
@@ -65,7 +66,7 @@ def register():
             username=username,
             password=password,
             name=name,
-            profile_image=profile_image,
+            profile_image=os.path.basename(profile_image) if profile_image else 'default.png',
             role=role,
             bio=bio
         )

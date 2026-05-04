@@ -1,6 +1,8 @@
 from src.extenstion import db
 from datetime import datetime
 
+import os
+
 class BlogModel(db.Model):
     __tablename__ = 'blogs'
     
@@ -76,7 +78,7 @@ class BlogModel(db.Model):
             'slug': self.slug,
             'content': self.content if include_content else None,
             'excerpt': self.excerpt,
-            'featured_image': f'/uploads/{self.featured_image}' if self.featured_image else None,
+            'featured_image': f'/uploads/{os.path.basename(self.featured_image)}' if self.featured_image else None,
             'author': {
                 'id': self.author_id,
                 'username': self.author.username if self.author else None,

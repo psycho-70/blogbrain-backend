@@ -4,6 +4,7 @@ from src.models.category_model import CategoryModel
 from src.models.login_model import LoginModel
 from flask_jwt_extended import jwt_required, get_jwt_identity
 import re
+import os
 
 category_bp = Blueprint('category_bp', __name__)
 
@@ -96,7 +97,7 @@ def create_category():
             name=data['name'],
             created_by=user_id,
             description=data.get('description', ''),
-            image=data.get('image', '')
+            image=os.path.basename(data.get('image', '')) if data.get('image') else ''
         )
         
         db.session.add(category)
@@ -146,7 +147,7 @@ def update_category(category_id):
             category.description = data['description']
         
         if 'image' in data:
-            category.image = data['image']
+            category.image = os.path.basename(data['image']) if data['image'] else ''
         
         if 'is_active' in data and user.role == 'admin':
             category.is_active = data['is_active']

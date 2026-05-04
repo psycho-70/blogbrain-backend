@@ -53,7 +53,7 @@ class LoginModel(db.Model):
     def get_profile_image_url(self):
         """Get full URL for profile image"""
         if self.profile_image and self.profile_image != 'default.png':
-            return f'/uploads/{self.profile_image}'
+            return f'/uploads/{os.path.basename(self.profile_image)}'
         return '/uploads/default.png'
     
     def update_profile_image(self, filename):

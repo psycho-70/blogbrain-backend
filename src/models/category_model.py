@@ -1,6 +1,8 @@
 from src.extenstion import db
 from datetime import datetime
 
+import os
+
 class CategoryModel(db.Model):
     __tablename__ = 'categories'
     
@@ -53,7 +55,7 @@ class CategoryModel(db.Model):
             'name': self.name,
             'slug': self.slug,
             'description': self.description,
-            'image': f'/uploads/{self.image}' if self.image else None,
+            'image': f'/uploads/{os.path.basename(self.image)}' if self.image else None,
             'created_by': self.created_by,
             'creator': self.creator_rel.username if self.creator_rel else None,
             'created_at': self.created_at.isoformat() if self.created_at else None,

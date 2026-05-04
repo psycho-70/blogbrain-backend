@@ -6,6 +6,7 @@ from src.models.login_model import LoginModel
 from flask_jwt_extended import jwt_required, get_jwt_identity
 import urllib.request
 import json
+import os
 from datetime import datetime
 
 blog_bp = Blueprint('blog_bp', __name__)
@@ -211,7 +212,7 @@ def create_blog():
             author_id=user_id,
             category_id=data['category_id'],
             excerpt=data.get('excerpt'),
-            featured_image=data.get('featured_image'),
+            featured_image=os.path.basename(data.get('featured_image', '')) if data.get('featured_image') else '',
             tags=','.join(data.get('tags', [])) if isinstance(data.get('tags'), list) else data.get('tags', ''),
             meta_title=data.get('meta_title'),
             meta_description=data.get('meta_description'),
@@ -295,7 +296,7 @@ def update_blog(blog_id):
             blog.excerpt = data['excerpt']
         
         if 'featured_image' in data:
-            blog.featured_image = data['featured_image']
+            blog.featured_image = os.path.basename(data['featured_image']) if data['featured_image'] else ''
         
         if 'tags' in data:
             blog.tags = ','.join(data['tags']) if isinstance(data['tags'], list) else data['tags']
