@@ -18,3 +18,4 @@ flask_jwt_extended
 marshmallow
 cryptography
 flask_cors
+resend
